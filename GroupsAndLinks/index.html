@@ -1,0 +1,81 @@
+<head>
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+</head>
+
+<!-- The DIV for a Diagram needs an explicit size or else we will not see anything.
+     In this case we also add a background color so we can see that area. -->
+<html>
+<body>
+<h1>検証用</h1>
+<div id="myDiagramDiv" style="width:600px; height:400px; background-color: #DAE4E4;"></div>
+<div>
+  <p>操作説明</p>
+  <ul>
+    <li>ノードをドラッグで移動</li>
+    <li>背景をドラッグで全体移動</li>
+    <li>ピンチイン・ピンチアウトで拡縮が可能</li>
+    <li>command + c & command + vでコピペができる</li>
+    <li>ノードを選択してdeleteで削除可能</li>
+    <li>command + zで前の操作を取り消す</li>
+  </ul>
+</div>
+</body>
+</html>
+
+<script>
+  var $ = go.GraphObject.make;
+
+  var myDiagram =
+    $(go.Diagram, "myDiagramDiv",
+      {
+        // allow double-click in background to create a new node
+        "clickCreatingTool.archetypeNodeData": { key: "Node", color: "white" },
+        // allow Ctrl-G to group selected nodes
+        "commandHandler.archetypeGroupData": { text: "Group", isGroup: true },
+        // have mouse wheel events zoom in and out instead of scroll up and down
+        "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
+        "undoManager.isEnabled": true, // enable undo & redo
+        layout: new go.TreeLayout({ angle: 90, layerSpacing: 35 })
+      });
+
+  myDiagram.nodeTemplate =
+    $(go.Node, "Horizontal",
+      { background: "#44CCFF" },
+      $(go.Picture,
+        { margin: 10, width: 50, height: 50, background: "red" },
+        new go.Binding("source")),
+      $(go.TextBlock, "Default Text",
+        { margin: 12, stroke: "white", font: "bold 16px sans-serif", editable: true },
+        new go.Binding("text", "name"))
+    );
+
+  myDiagram.groupTemplate =
+    $(go.Group, "Vertical",
+      { ungroupable: true }, // allow Ctrl-Shift-G to ungroup a selected Group.
+      $(go.TextBlock, "Default Text",
+        { font: "bold 12pt sans-serif" },
+        new go.Binding("text", "name")),
+      $(go.Panel, "Auto",
+        $(go.Shape, { fill: "transparent" }),
+        $(go.Placeholder, { padding: 10 })
+      )
+    );
+
+    var nodeDataArray = [
+      { key: 1, name: "Don Meow", color: "lightblue", source: "cat1.png" },
+      { key: 2, name: "Demeter", color: "orange", source: "cat2.png" },
+      { key: 3, name: "Copricat", color: "lightgreen", source: "cat3.png" },
+      { key: 4, name: "Jellylorum", color: "pink", source: "cat4.png", group: 7 },
+      { key: 5, name: "Alonzo", color: "pink", source: "cat5.png", group: 7 },
+      { key: 6, name: "Munkustrap", color: "pink", source: "cat6.png" },
+      { key: 7, name: "Group", isGroup: true }
+    ];
+    var linkDataArray = [
+      { from: 1, to: 2 },
+      { from: 1, to: 3 },
+      { from: 2, to: 6 },
+      { from: 3, to: 7 }
+    ];
+    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+</script>
