@@ -1,0 +1,39 @@
+<head>
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+</head>
+
+<!-- The DIV for a Diagram needs an explicit size or else we will not see anything.
+     In this case we also add a background color so we can see that area. -->
+<html>
+  <body>
+    <h1>検証用</h1>
+    <div id="myDiagramDiv" style="width:400px; height:150px; background-color: #DAE4E4;"></div>
+    <div>
+      <p>操作説明</p>
+      <ul>
+        <li>ノードをドラッグで移動</li>
+        <li>背景をドラッグで全体移動</li>
+        <li>ピンチイン・ピンチアウトで拡縮が可能</li>
+        <li>command + c & command + vでコピペができる</li>
+        <li>ノードを選択してdeleteで削除可能</li>
+        <li>command + zで前の操作を取り消す</li>
+      </ul>
+    </div>
+  </body>
+</html>
+
+<script>
+  // You can specify options in the Diagram's second argument
+  // These options not only include Diagram properties, but sub-properties, too.
+  var myDiagram = new go.Diagram("myDiagramDiv",
+    { // enable Ctrl-Z to undo and Ctrl-Y to redo
+      "undoManager.isEnabled": true
+    });
+  myDiagram.model = new go.Model(
+    [ // for each object in this Array, the Diagram creates a Node to represent it
+      { key: "Alpha" },
+      { key: "Beta" },
+      { key: "Gamma" }
+    ]);
+</script>
