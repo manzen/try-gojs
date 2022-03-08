@@ -1,0 +1,61 @@
+<head>
+  <meta charset="utf-8">
+  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+</head>
+
+<!-- The DIV for a Diagram needs an explicit size or else we will not see anything.
+     In this case we also add a background color so we can see that area. -->
+<html>
+<body>
+<h1>検証用</h1>
+<div id="myDiagramDiv" style="width:400px; height:150px; background-color: #DAE4E4;"></div>
+<div>
+  <p>操作説明</p>
+  <ul>
+    <li>ノードをドラッグで移動</li>
+    <li>背景をドラッグで全体移動</li>
+    <li>ピンチイン・ピンチアウトで拡縮が可能</li>
+    <li>command + c & command + vでコピペができる</li>
+    <li>ノードを選択してdeleteで削除可能</li>
+    <li>command + zで前の操作を取り消す</li>
+  </ul>
+</div>
+</body>
+</html>
+
+<script>
+  var myDiagram =
+    new go.Diagram("myDiagramDiv",
+      { // enable Ctrl-Z to undo and Ctrl-Y to redo
+        "undoManager.isEnabled": true
+      });
+
+  // define a simple Node template
+  myDiagram.nodeTemplate =
+    new go.Node("Horizontal",
+      // the entire node will have a light-blue background
+      { background: "#44CCFF" })
+      .add(new go.Picture(
+        // Pictures should normally have an explicit width and height.
+        // This picture has a red background, only visible when there is no source set
+        // or when the image is partially transparent.
+        { margin: 10, width: 50, height: 50, background: "red" })
+      // Picture.source is data bound to the "source" attribute of the model data
+        .bind("source"))
+      .add(new go.TextBlock(
+        "Default Text",  // the initial value for TextBlock.text
+        // some room around the text, a larger font, and a white stroke:
+        { margin: 12, stroke: "white", font: "bold 16px sans-serif" })
+      // TextBlock.text is data bound to the "name" property of the model data
+        .bind("text", "name"));
+
+  myDiagram.model = new go.Model(
+    [ // note that each node data object holds whatever properties it needs;
+      // for this app we add the "name" and "source" properties
+      // because in our template above, we have defined a bindings to expect them
+      { name: "Don Meow", source: "cat1.png" },
+      { name: "Copricat", source: "cat2.png" },
+      { name: "Demeter",  source: "cat3.png" },
+      { /* Empty node data, to show a node with no bindings */ }
+    ]);
+</script>
